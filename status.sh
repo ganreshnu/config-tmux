@@ -2,7 +2,6 @@
 
 function main() {
 
-
 	pushd $HOME
 	if [[ -n "$(git -C .gnupg status --porcelain)" ]]; then
 		printf "#[fg=red]%s#[default] " "gnupg"
@@ -20,6 +19,7 @@ function main() {
 	popd # .config
 	popd # $HOME
 
+	printf "#[fg=green]C:%s#[default] " "$(docker ps --quiet | wc -l)"
 	printf "#[fg=yellow]%s#[default]%s" "$(hostname)" "$(date +'%l:%M%P')"
 
 }
