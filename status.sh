@@ -1,24 +1,33 @@
 #!/bin/zsh
 
-#for i in $(find . -maxdepth 2 -type d -name .git); echo $(basename $(dirname $i))
+function check-git-status() {
+	local branch="$(git -C $1 branch --show-current)"
+	local color=""
+
+	if  ! git -C $1 diff-files --quiet --ignore-submodules || ! git -C $1 diff-index --cached --quiet --ignore-submodules HEAD --; then
+		# uncommitted changes
+		color="yellow"
+	elif ! git -C $1 diff --quiet origin/${branch}..${branch}; then
+		# unpushed commits
+		color="brightred"
+	fi
+
+	if [[ -n $color ]]; then
+		printf "#[fg=${color}]%s#[default] " "$(basename $1)"
+	fi
+}
 
 function main() {
 
 	pushd $HOME
 
 	pushd .config
-	for i in $(find . -maxdepth 2 -type d -name .git); do
-		if [[ -n "$(git -C $(dirname $i) status --porcelain)" ]]; then
-			printf "#[fg=brightred]%s#[default] " "$(basename $(dirname $i))"
-		fi
-	done
+	for i in $(find . -maxdepth 2 -type d -name .git)
+		check-git-status $(dirname $i)
 	popd # .config
 
-	for i in $(find . -maxdepth 2 -type d -name .git); do
-		if [[ -n "$(git -C $(dirname $i) status --porcelain)" ]]; then
-			printf "#[fg=brightyellow]%s#[default] " "$(basename $(dirname $i))"
-		fi
-	done
+	for i in $(find . -maxdepth 2 -type d -name .git)
+		check-git-status $(dirname $i)
 
 	popd # $HOME
 
