@@ -2,18 +2,21 @@
 
 function check-git-status() {
 	local branch="$(git -C $1 branch --show-current)"
-	local color=""
+	local style=""
 
-	if  ! git -C $1 diff-files --quiet --ignore-submodules || ! git -C $1 diff-index --cached --quiet --ignore-submodules HEAD --; then
+	if ! git -C $1 diff-files --quiet --ignore-submodules; then
+		# unstaged changes
+		style="fg=yellow,italics"
+	elif ! git -C $1 diff-index --cached --quiet --ignore-submodules HEAD --; then
 		# uncommitted changes
-		color="yellow"
-	elif ! git -C $1 diff --quiet origin/${branch}..${branch}; then
+		style="fg=yellow"
+	elif ! git -C $1 diff --quiet origin; then
 		# unpushed commits
-		color="brightred"
+		style="fg=brightred,italics"
 	fi
 
-	if [[ -n $color ]]; then
-		printf "#[fg=${color}]%s#[default] " "$(basename $1)"
+	if [[ -n $style ]]; then
+		printf "#[${style}]%s#[default] " "$(basename $1)"
 	fi
 }
 
