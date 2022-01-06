@@ -7,15 +7,16 @@ function check-git-status() {
 	if ! git -C $1 diff-files --quiet --ignore-submodules; then
 		# unstaged changes
 		style="fg=yellow,italics"
-	elif ! git -C $1 diff-index --cached --quiet --ignore-submodules HEAD; then
+	elif ! git -C $1 diff-index --cached --quiet --ignore-submodules HEAD 2>/dev/null; then
 		# uncommitted changes
 		style="fg=yellow"
-	elif ! git -C $1 diff --quiet origin; then
+	elif ! git -C $1 diff --quiet origin 2>/dev/null; then
 		# unpushed commits
 		style="fg=brightred,italics"
 	fi
 
 	if [[ -n $style ]]; then
+		local name=$(basename $1)
 		printf "#[${style}]%s#[default] " "$(basename $1)"
 	fi
 }
