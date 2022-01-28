@@ -36,8 +36,7 @@ function main() {
 	popd # $HOME
 
 	printf "#[fg=brightcyan]C:%s#[default] " "$(docker ps --quiet | wc -l)"
-	printf "#[fg=brightblack]%s %s#[default]" "$(hostname)" "$(date +'%l:%M%P')"
+	#printf "#[fg=brightblack]%s %s#[default]" "$(hostname)" "$(date +'%l:%M%P')"
 
 }
-
-main
+main $@
