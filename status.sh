@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 function check-git-status() {
 	local branch="$(git -C $1 branch --show-current)"
@@ -23,20 +23,24 @@ function check-git-status() {
 
 function main() {
 
-	pushd $HOME
+	pushd $HOME > /dev/null
 
-	pushd .config
-	for i in $(find . -maxdepth 2 -type d -name .git)
-		check-git-status $(dirname $i)
-	popd # .config
+	for i in $(cat .local/state/user_config_dirs); do
+		check-git-status "$i"
+	done
+	# pushd .config
+	# for i in $(find . -maxdepth 2 -type d -name .git)
+	# 	check-git-status $(dirname $i)
+	# popd # .config
+	#
+	# for i in $(find . -maxdepth 2 -type d -name .git)
+	# 	check-git-status $(dirname $i)
+	#
+	# popd # $HOME
 
-	for i in $(find . -maxdepth 2 -type d -name .git)
-		check-git-status $(dirname $i)
-
-	popd # $HOME
-
-	printf "#[fg=brightcyan]C:%s#[default] " "$(docker ps --quiet | wc -l)"
+	# printf "#[fg=brightcyan]C:%s#[default] " "$(docker ps --quiet | wc -l)"
 	#printf "#[fg=brightblack]%s %s#[default]" "$(hostname)" "$(date +'%l:%M%P')"
+	# printf "hello\n"
 
 }
 main $@
