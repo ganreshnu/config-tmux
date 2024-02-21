@@ -1,8 +1,9 @@
 #!/bin/bash
 
 function check-git-status() {
-	local branch="$(git -C "$1" branch --show-current)"
-	local style=""
+	# local branch
+	# branch="$(git -C "$1" branch --show-current)"
+	local style
 
 	if ! git -C "$1" diff-files --quiet --ignore-submodules; then
 		# unstaged changes
@@ -16,7 +17,6 @@ function check-git-status() {
 	fi
 
 	if [[ -n $style ]]; then
-		local name=$(basename "$1")
 		printf "#[${style}]%s#[default] " "$(basename "$1")"
 	fi
 }
@@ -25,9 +25,9 @@ function main() {
 
 	pushd "$HOME" > /dev/null || return
 
-	for i in $(cat .local/state/user_config_dirs); do
-		check-git-status "$i"
-	done
+	while read -r d; do
+		check-git-status "$d"
+	done < .local/state/user_config_dirs
 
 	popd > /dev/null || return
 }
